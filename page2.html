@@ -1,0 +1,404 @@
+<!-- Web App Development Project -->
+<!-- Author Katie O'Brien G00398250-->
+<!-- Unless explicitly referenced, all code is from GMIT student lecture notes and videos-->
+
+<!doctype html>
+<html>
+<head>
+
+  <!-- This section names the document, and sets the encoding standard and document width-->
+  <title> 2021 Drivers championship </title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- importing the scripts required-->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+
+   <!-- setting the style, if used-->
+  <style>
+  </style>
+</head>
+
+<!-- Setting the background color of the document, and adding the header images, and inbuilt links to the other web pages-->
+<body style="background-color:rgb(8, 8, 8);">
+  <img src = "Images/f1logo.png">
+  <a href = "page1.html"><img src = "Images/header1.jpg" style="width:200px;height:90px;"> </a>
+  <a href = "page2.html"><img src = "Images/header2.jpg" style="width:200px;height:90px;"> </a>
+  <a href = "page3.html"><img src = "Images/header3.jpg" style="width:200px;height:90px;"> </a>
+  <img src = "Images/f1logo.png">
+
+<!-- The following section creates a dropdown menu for 2 user-set variables
+      These are: Chart Height and Transition time -->  
+  
+  <p style = "color:rgb(250, 250, 250)">Pick Animation time</p>
+
+  <!-- id time will be used to set duration of transitions below -->
+  <select id= "time">
+    <option value = "1000"> 1 second</option>
+    <option value = "2000"> 2 second</option>
+    <option value = "3000"> 3 second</option>
+    <option value = "4000"> 4 second</option>
+  </select>
+
+<!-- id ChartHeight will be used below to set the height of the chart -->
+  <p style = "color:rgb(250, 250, 250)">Pick Height</p>
+  <select id= "Chartheight">
+    <option value = "300"> 300</option>
+    <option value = "600"> 600</option>
+    <option value = "900"> 900</option>  
+  </select>
+
+
+</br>
+<!-- Creating an event using a button, which will draw the plot to the screen -->
+  <button onclick ="drawChart()"> Draw Chart</button>
+
+
+<p style = "color:rgb(250, 250, 250)"> Max Verstappen race-by-race- results</p>
+</br>
+</br>
+
+ <!-- This is creating the first div for the first SVG that we are about to draw below -->
+ <!-- Note the id names are different-->
+<div id = "svg1"></div>
+
+<p style = "color:rgb(250, 250, 250)"> Lewis Hamilton race-by-race- results</p>
+</br>
+</br>
+
+ <!-- This is creating the 2nd div for the 2nd SVG that we are about to draw below -->
+<div id = "svg2"></div>
+
+
+
+
+  
+</body>
+
+</html>
+<!-- Scripting for the document above -->
+<script>
+
+// Code to create the svg object 
+// Creating a function from the "onclick()" event above in line 48
+
+function drawChart(){
+
+// Creating the required list of variables for plotting below
+// These are: data from the variables above in 2 arrays, the width of bars and total graph width
+//  Also we have the variables that have been created using a DOM query from the ID's in rows 36 and 45 
+// These will be used further below for setting the required elements
+    var width = 48;
+    var time = document.getElementById("time").value;
+    var height = document.getElementById ("Chartheight").value;
+    var max = "CSV/max.csv";
+    var lewis = "CSV/lewis.csv";
+  
+// Ensuring that the plot draws over the old plot, if one exists, so multiple plots are not drawn to the page 
+// This is done for both SVG containers at this point  
+d3.select("#svg1").selectAll("*").remove(); 
+d3.select("#svg2").selectAll("*").remove();
+
+// Reading in the CSV file for the first CSV
+d3.csv(max).then(function(data){console.log(data);
+
+// This is read in as a string, to ensure we have correct outputs
+//We need to convert to numbers
+data.forEach(function(d){d.Position = Number(d.Position);
+})
+
+
+// Creating y and x-scales for the plot- this tells the axis how big/small/tick placement etc
+// Then creating the axes themelves. using d3 elements to place the axes on the plot 
+
+    // Y-Scale
+    var yScale = d3.scaleLinear()
+    .domain([0,d3.max(data,function(d){return d.Position;
+      })])
+    .range([height,0]);
+
+
+    // Creating X-scale, This is using the other variable in the CSV file, track location
+    var xScale = d3.scaleBand()
+    .domain(data.map(function(d){return d.Track;
+    }))
+    .range([0,1100]);
+
+
+    //Create y axis
+    var yAxis = d3.axisLeft()
+      .scale(yScale);
+
+    //Create x axis
+    var xAxis = d3.axisBottom()
+      .scale(xScale);
+
+
+// Creating the SVG container to draw the plot into- this is like the blank canvas
+// This is referencing the div in row 63- the #svg1. 
+// We have also specified the size of the container. 
+
+    let svgContainer = d3.select("#svg1").append("svg")
+          .attr("height", 1000)
+          .attr("width",1800);
+
+
+// This is "joining" the data that is about  to be entered below and the svgContainer above 
+// It is also calling the csv file we opened in row 103
+
+    let myrect = svgContainer.selectAll("rect")
+          .data(data);
+          
+// Creating the rectangles needed for a bar chart 
+    myrect.enter()
+
+        
+          .append("rect")
+          // Setting starting transition points- note we are using the user-set height variable here
+          .attr("x", function (d,i){return 50 + (i*50 );
+          })
+          .attr("y", height)
+          //Adding transitions- again using the time variable from above 
+          .transition()
+          .duration(time)
+          .ease(d3.easeBounceOut)
+          // This sets the x- coordinates for each rectangle- starts 50px in from the left (50 + (50*0) = 50)
+          //then each rectangle is 50px further from the left of the page
+          .attr("x", function (d,i){return 50 + (i*50 );
+          }) 
+          // This is setting the y- coordinates for the plot using the scale created above, and the d.Position element of the CSV 
+          .attr("y",function(d){return yScale(d.Position);
+          })
+          // This is setting the height for each rectangle, this is using the data from the array that we saw earlier
+          // it also uses the user-set data that we created a variable with in row 93
+          .attr("height", function (d){return  height- yScale(d.Position);
+          })
+          // Setting the width of the individual bars
+          .attr("width", width)
+          // Setting the color of the bars
+          // As these are colored based on value- it was not possible to allow
+          // user input to change them
+          .attr("fill", function (d){
+            if (d.Position == 1){return "green";}
+            else if (d.Position == 2){return "orange";}
+            else if (d.Position == 3){return "yellow";}
+            else {return "red";}
+            })
+
+   
+// Creating the labels for the chart. These appear just above the x-axis when the plot has completed. 
+
+//This is "joining" the data that is about  to be entered below and the svgContainer above 
+
+
+    let mylabel = svgContainer.selectAll("text")
+      .data(data);
+
+// Creating the labels for the chart 
+    mylabel.enter()
+        .append("text")
+
+      //  Transition starting state- we have just modified the x-axis in this instance 
+      .attr("x", function (d,i){return 75 + (i*50 ); 
+      })
+      // adding transition- note we are using the user-set time variable again here 
+      .transition()
+      .duration(time)
+      .delay(500)
+      .ease(d3.easeCircleIn)
+      // Transition ended
+      // X and Y coordinates for the labels- note the offset position versus the rectangles above.
+      // This is so the text appears centred on the bars, and that the labels are readable for the user 
+      .attr("x", function (d,i){return 75 + (i*50 ); 
+      }) 
+      .attr("y", height - 20)
+
+    // Setting the text styling        
+      .attr("text-anchor", "middle")
+      .attr("font-size", "10px")
+      .attr("fill" , "white")
+
+      // Finally, calling the text, and in this instance we are using the same CSV data 
+      .text(function(d){
+        return d.Position;
+      })
+ 
+    
+
+// Adding the x and y axes to the chart after they are drawn. 
+// The "transform" and "translate" elements are the x and y coordinates
+// Note on the x axis we have again called the user-input height to ensure that the axes are created correctly 
+   svgContainer.append("g")
+    .attr("transform","translate(50,0)")
+    .call(yAxis)
+    .selectAll("text")
+        .attr("fill", "white");     
+
+    svgContainer.append("g")
+    .attr("transform","translate (40," + height + ")")
+    .call(xAxis)
+    .selectAll("text")
+        .attr("transform","rotate (60)")
+        .attr("text-anchor","start")
+        .attr("fill", "white");
+      
+      
+ 
+
+
+  
+})
+
+
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Lewis Bar Chart 
+
+// Reading in the CSV file for the first CSV
+d3.csv(lewis).then(function(data){console.log(data);
+
+// This is read in as a string, to ensure we have correct outputs
+//We need to convert to numbers
+data.forEach(function(d){d.Position = Number(d.Position);
+})
+
+// Creating y and x-scales for the plot- this tells the axis how big/small/tick placement etc
+// Then creating the axes themelves. using d3 elements to place the axes on the plot 
+
+    // Y-Scale
+    var yScale = d3.scaleLinear()
+    .domain([0,d3.max(data,function(d){return d.Position;
+        })])
+    .range([height,0]);
+
+    // Creating X-scale, This is using the other variable in the CSV file, track location
+    var xScale = d3.scaleBand()
+    .domain(data.map(function(d){return d.Track;
+      }))
+    .range([0,1100]);
+
+
+    //Create y axis
+    var yAxis = d3.axisLeft()
+    .scale(yScale);
+
+    //Create x axis
+    var xAxis = d3.axisBottom()
+    .scale(xScale);
+
+
+// Creating the SVG container to draw the plot into- this is like the blank canvas
+// This is referencing the div in row 70- the #svg2. 
+// We have also specified the size of the container. 
+
+   let svgContainer = d3.select("#svg2").append("svg")
+         .attr("height", 1000)
+         .attr("width",1800)
+         ;
+
+
+
+// This is "joining" the data that is about  to be entered below and the svgContainer above 
+// It is also calling the csv file we opened in row 258     
+
+     let myrect = svgContainer.selectAll("rect")
+         .data(data);
+         
+// Creating the rectangles needed for a bar chart 
+     myrect.enter()
+
+         .append("rect")
+         // Setting starting transition points- note we are using the user-set height variable here
+         .attr("x", function (d,i){return 50 + (i*50 );
+         })
+         .attr("y", height)
+         // //Adding transitions- again using the time variable from above 
+         .transition()
+         .duration(time)
+         .ease(d3.easeBounceOut) 
+         // This sets the x- coordinates for each rectangle- starts 50px in from the left (50 + (50*0) = 50)
+         // then each rectangle is 50px further from the left of the page
+         .attr("x", function (d,i){return 50 + (i*50 );
+         })
+        // This is setting the y- coordinates for the plot using the scale created above, and the d.Position element of the CSV 
+         .attr("y",function(d){return yScale(d.Position);
+         })
+         // This is setting the height for each rectangle, this is using the data from the array that we saw earlier
+          // it also uses the user-set data that we created a variable with in row 93
+         .attr("height", function (d){return height- yScale(d.Position);
+         }) 
+         // Setting the width of the individual bars
+         .attr("width", width)
+         // Setting the color of the bars
+         // As these are colored based on value- it was not possible to allow
+         // user input to change them
+         .attr("fill", function (d){
+            if (d.Position == 1){return "green";}
+            else if (d.Position == 2){return "orange";}
+            else if (d.Position == 3){return "yellow";}
+            else {return "red";}
+            })
+
+
+// Creating the labels for the chart. These appear just above the x-axis when the plot has completed. 
+
+//This is "joining" the data that is about  to be entered below and the svgContainer above 
+
+
+    let mylabel = svgContainer.selectAll("text")
+        .data(data);
+
+// Creating the labels for the chart 
+
+    mylabel.enter()
+        .append("text")
+
+      //  Transition starting state- we have just modified the x-axis in this instance 
+      .attr("x", function (d,i){return 75 + (i*50 );
+        })
+        // adding transition - note we are using the user-set time variable again here 
+        .transition()
+        .duration(time)
+        .delay(500)
+        .ease(d3.easeCircleIn)
+        // Transition ended
+        // X and Y coordinates for the labels- note the offset position versus the rectangles above.
+        // This is so the text appears centred on the bars, and that the labels are readable for the user 
+        .attr("x", function (d,i){return 75 + (i*50 ); 
+        }) 
+        .attr("y", height - 20 ) 
+
+      // Setting the text styling
+        .attr("text-anchor", "middle")
+        .attr("font-size", "10px")
+        .attr("fill" , "white")
+        // Finally, calling the text, and in this instance we are using the same CSV data 
+        .text(function(d){
+          return d.Position;
+        })
+
+
+// Adding the x and y axes to the chart after they are drawn. 
+// The "transform" and "translate" elements are the x and y coordinates
+// Note on the x axis we have again called the user-input height to ensure that the axes are created correctly 
+    svgContainer.append("g")
+      .attr("transform","translate(50,0)")
+      .call(yAxis)
+      .selectAll("text")
+        .attr("fill", "white");     
+
+    
+    svgContainer.append("g")
+      .attr("transform","translate (40,"+ height + ")")
+      .call(xAxis)
+      .selectAll("text")
+        .attr("transform","rotate (60)")
+        .attr("text-anchor","start")
+        .attr("fill", "white");
+      
+
+    })
+
+  }   
+
+</script>

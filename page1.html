@@ -1,0 +1,337 @@
+<!-- Web App Development Project -->
+<!-- Author Katie O'Brien G00398250-->
+<!-- Unless explicitly referenced, all code is from https://www.w3schools.com/howto/howto_css_login_form.asp-->
+
+<!doctype html>
+<html>
+<head>
+  <title> F1 2021 Championship </title>
+
+  <!-- This section names the document, and sets the encoding standard and document width-->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- importing the scripts required-->
+  <script src="https://d3js.org/d3.v7.min.js">
+  </script>
+
+  <!-- setting the style, if used-->
+  <style>
+    body {font-family: Arial, Helvetica, sans-serif;}
+
+/* Full-width input fields */
+input[type=text], input[type=password] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+/* Set a style for all buttons */
+button {
+  background-color: #04AA6D;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+/* Extra styles for the cancel button */
+.cancelbtn {
+  width: auto;
+  padding: 10px 18px;
+  background-color: #f44336;
+}
+
+/* Center the image and position the close button */
+.imgcontainer {
+  text-align: center;
+  margin: 24px 0 12px 0;
+  position: relative;
+}
+
+img.avatar {
+  width: 40%;
+  border-radius: 50%;
+}
+
+.container {
+  padding: 16px;
+}
+
+span.psw {
+  float: right;
+  padding-top: 16px;
+}
+
+/* The Modal (background) */
+.modal {
+  /* Hidden by default */
+  display: none; 
+  /* Stay in place */
+  position: fixed; 
+  /* Sit on top */
+  z-index: 1;
+  left: 0;
+  top: 0;
+  /* Full width */
+  width: 100%; 
+  /* Full height */
+  height: 100%;
+  /* Enable scroll if needed */
+  overflow: auto; 
+  /* Fallback color */
+  background-color: rgb(0,0,0);
+  /* Black w/ opacity */ 
+  background-color: rgba(0,0,0,0.4);
+  padding-top: 60px;
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  /* 5% from the top, 15% from the bottom and centered */
+  margin: 5% auto 15% auto; 
+  border: 1px solid #888;
+  /* Could be more or less, depending on screen size */
+  width: 80%; 
+}
+
+/* The Close Button (x) */
+.close {
+  position: absolute;
+  right: 25px;
+  top: 0;
+  color: #000;
+  font-size: 35px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: red;
+  cursor: pointer;
+}
+
+/* Add Zoom Animation */
+.animate {
+  -webkit-animation: animatezoom 0.6s;
+  animation: animatezoom 0.6s
+}
+
+@-webkit-keyframes animatezoom {
+  from {-webkit-transform: scale(0)} 
+  to {-webkit-transform: scale(1)}
+}
+  
+@keyframes animatezoom {
+  from {transform: scale(0)} 
+  to {transform: scale(1)}
+}
+
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 300px) {
+  span.psw {
+     display: block;
+     float: none;
+  }
+  .cancelbtn {
+     width: 100%;
+  }
+}
+
+
+  </style>
+  
+  
+
+</head>
+
+<!-- Setting the background color of the document, and adding the header images, and inbuilt links to the other web pages-->
+<body style="background-color:rgb(7, 6, 6);">
+<!-- Header images and buttons -->
+  <img src = "Images/f1logo.png">
+  <a href = "page1.html"><img src = "Images/header1.jpg" style="width:200px;height:90px;"> </a>
+  <a href = "page2.html"><img src = "Images/header2.jpg" style="width:200px;height:90px;"> </a>
+  <a href = "page3.html"><img src = "Images/header3.jpg" style="width:200px;height:90px;"> </a>
+  <img src = "Images/f1logo.png">
+  
+  <!-- Header 1-->
+  <h1> 2021 F1 Championships </h1>
+  <!-- Header 2-->
+  <h2> Login Form</h2>
+
+  <!-- Code to create the container and buttons for the login in screen-->
+  <button onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
+  
+  <div id="id01" class="modal">
+    
+    <form class="modal-content animate" >
+      <div class="imgcontainer">
+        <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+        <img  id = "pic_id" src="img_avatar2.png" alt="Avatar" class="avatar">
+      </div>
+  
+      <div class="container">
+        <label for="uname"><b>Username</b></label>
+        <input type="text" id = "user" placeholder="Enter Username" name="uname" required>
+  
+        <label for="psw"><b>Password</b></label>
+        <input type="password" id = "passw" placeholder="Enter Password" name="psw" required>
+          
+        <button type="submit" onclick ="Checkform()">Login</button>
+        <label>
+          <input type="checkbox" checked="checked" name="remember"> Remember me
+        </label>
+      </div>
+  
+      <div class="container" style="background-color:#eee3e3">
+        <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+        <span class="psw">Forgot <a href="#">password?</a></span>
+      </div>
+    </form>
+  </div> 
+  
+ 
+<!-- Text from Wikipedia relating to the website topic
+      Note the Wiki link at the bottom for reference-->  
+  
+<p style = "color:rgb(250, 250, 250)">The 2021 FIA Formula One World Championship was a motor racing championship for Formula One cars which was the 72nd running of the Formula One World Championship. It is recognised by the Fédération Internationale de l'Automobile (FIA), the governing body of international motorsport, as the highest class of competition for open-wheel racing cars. The championship was contested over twenty-two Grands Prix, and held around the world. Drivers and teams competed for the titles of World Drivers' Champion and World Constructors' Champion, respectively. </p>
+
+Max Verstappen won his first World Championship (and the first for a Dutch driver), driving for Red Bull Racing-Honda. <img src = "Images/max.jpg" style="width:300px"; align = "right"/>
+<br clear = "left"/>
+
+<p style = "color:rgb(250, 250, 250)">
+Lewis Hamilton, the defending champion, finished runner-up, driving for Mercedes.
+
+Hamilton's teammate Valtteri Bottas was third, driving for Mercedes.
+
+Mercedes won their eighth consecutive Constructors' Championship.
+</p>
+<p style = "color:rgb(250, 250, 250)">
+At season's end in Abu Dhabi, Max Verstappen of Red Bull Racing-Honda won the Drivers' Championship for the first time in his career. Verstappen became the first ever driver from the Netherlands, the first Honda-powered driver since Ayrton Senna in 1991,the first Red Bull driver since Sebastian Vettel in 2013 and the first non-Mercedes driver in the turbo-hybrid era to win the World Championship. Also, Honda became the second engine supplier to power a championship winning car, after Mercedes. Four-time defending and seven-time champion Lewis Hamilton of Mercedes finished runner up. Mercedes retained the Constructors' Championship for the eighth consecutive season.
+</p>
+<p style = "color:rgb(250, 250, 250)">
+
+The season ended with a controversial finish, with the two title rivals for the drivers' crown entering the last race of the season with equal points. Verstappen sealed the title after winning the season-ending Abu Dhabi Grand Prix after a last-lap restart pass on Hamilton following a contentious conclusion of a safety car period. Mercedes initially protested the results, and later decided not to appeal after their protest was denied.The incident led to key structural changes to race control, including the removal of Michael Masi from his role as race director and the implementation of a virtual race control room, who assist the race director.
+</p>
+<p style = "color:rgb(250, 250, 250)">
+Unlapping procedures behind the safety car were to be reassessed and presented by the F1 Sporting Advisory Committee prior to the start of the 2022 World Championship season. On 10 March 2022 the FIA World Motor Sport Council report on the events of the final race of the season was announced, and that the "Race Director called the safety car back into the pit lane without it having completed an additional lap as required by the Formula 1 Sporting Regulations", however also noted that the "results of the 2021 Abu Dhabi Grand Prix and the FIA Formula One World Championship are valid, final and cannot now be changed".
+
+</p>
+<p style = "color:rgb(250, 250, 250)">
+This was the first season since 2008 where the champion driver was not from the team that took the constructors' title. </br> Source: <a href = "https://en.wikipedia.org/wiki/2021_Formula_One_World_Championship"> Wiki </a>
+</p>  
+<!-- Header 2 relating to the form validation-->
+<h2 style = "color: rgb(250, 250, 250)"> Sign Up for our newsletter!! </h2> 
+<!-- Mixture of text, email, and radio buttons in the form-->
+<form style = "color:rgb(250, 250, 250)"  name="myForm"  onsubmit="return validateForm()"> 
+  First Name: <br/>
+  <input type = "text" name = "fname"/> <br/>
+  
+  Last Name: <br/>
+  <input type = "text" name = "sname"/> <br/>
+  <!-- Set the email as required via HTML-->
+  Email Address: <br/>
+  <input type = "email" required/> <br/>
+  
+  My favourite team (select one): </br>
+  <input type = "radio" name = "Teams"/> Mercedes </br>
+  <input type = "radio" name = "Teams"/> Red Bull</br>
+  <input type = "radio" name = "Teams"/> Ferrari</br>
+  <input type = "radio" name = "Teams"/> McLaren</br>
+  <input type = "radio" name = "Teams"/>Aston Martin</br>
+  <input type = "radio" name = "Teams"/> Alpine</br>
+  <input type = "radio" name = "Teams"/>Alpha Tauri</br>
+  <input type = "radio" name = "Teams"/> Alfa Romeo</br>
+  <input type = "radio" name = "Teams"/>Williams</br>
+  <input type = "radio" name = "Teams"/>Haas</br>
+  
+  <input type = "Submit" value="Submit">
+  </form>
+
+
+
+  
+  
+  
+
+<script>
+// Code for the form validation below 
+// Modified from the follwing link:
+// https://www.w3schools.com/js/js_validation.asp
+
+// function takes the "validateForm" element created above and 
+// Checks the "myForm" and "fname" to ensure the value is not Null and if it is returns an alert 
+function validateForm() {
+  let x = document.forms["myForm"]["fname"].value;
+  if (x == "") {
+    alert("First name must be filled out");
+    return false;
+  }
+  // In this section of the function it also checks the suname section and returns a slightly different alert
+  let y = document.forms["myForm"]["sname"].value;
+  if (y=="") {
+    alert ("Surname must be filled out");
+     return false;
+    }
+}
+
+
+
+// Get the modal: This is from: https://www.w3schools.com/howto/howto_css_login_form.asp
+
+var modal = document.getElementById('id01');
+
+// Code created based on knowledge from GMIT lecture notes and videos:
+// Created variables for username and password
+// Also took in the user and password values from the html code above using a DOM query
+var user_name = document.getElementById("user").value;
+var pass_word = document.getElementById("passw").value;
+var user = "user";
+var password = "pass";
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
+
+// Unfortunately was unable to get this code working correctly. 
+// Tried a combination of Not Equals and Equals to attempt to match the code from above
+// When I had the code commented out it is not catching an incorrect password (as expected)
+// When I tried either of the 2 code blocks below it was alerting even when using the correct preset password and username
+
+/*function Checkform(){ 
+    if ((user_name !== user) || (pass_word !== password))
+        alert ("Incorrect Username or Password")
+        return false;
+         }*/
+
+/*function Checkform(){
+    if ( (user_name === user) && (pass_word === password) )
+        return
+    else alert ("Incorrect Username or Password")
+
+    } */
+
+
+// Used a DOM query to change the image in the log in to provide a more cohesive look to the the website 
+document.getElementById("pic_id").src = "Images/f1logo.png";
+</script>
+
+</body>
+</html>
+
+    
+

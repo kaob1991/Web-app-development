@@ -1,0 +1,239 @@
+<!-- Web App Development Project -->
+<!-- Author Katie O'Brien G00398250-->
+<!-- Unless explicitly referenced, all code is from GMIT student lecture notes and videos-->
+
+<!doctype html>
+<html>
+<head>
+
+  <!-- This section names the document, and sets the encoding standard and document width-->
+  <title> 2021 Constructors Championship  </title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- importing the scripts required-->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+
+  <!-- setting the style, if used-->
+  <style>
+  </style>
+</head>
+
+<!-- Setting the background color of the document, and adding the header images, and inbuilt links to the other web pages-->
+<body style="background-color:rgb(8, 8, 8);">
+  <img src = "Images/f1logo.png">
+    <a href = "page1.html"><img src = "Images/header1.jpg" style="width:200px;height:90px;"> </a>
+    <a href = "page2.html"><img src = "Images/header2.jpg" style="width:200px;height:90px;"> </a>
+    <a href = "page3.html"><img src = "Images/header3.jpg" style="width:200px;height:90px;"> </a>
+  <img src = "Images/f1logo.png">
+
+<!-- The following section creates a dropdown menu for 3 user-set variables
+      These are: Chart Height, Transition time, and color picker -->  
+  
+  <p style = "color:rgb(250, 250, 250)">Pick Height</p>
+
+  <!-- id ChartHeight will be used below to set the height of the chart -->
+  <select id= "chartHeight">
+    <option value = "300"> 300</option>
+    <option value = "600"> 600</option>
+    <option value = "900"> 900</option>
+  </select>
+
+
+  <p style = "color:rgb(250, 250, 250)"> Animation Duration Time </p>
+
+  <!-- id time will be used to set duration of transitions below -->
+  <select id= "time">
+    <option value = "1000"> 1 secs</option>
+    <option value = "2000"> 2 secs</option>
+    <option value = "3000"> 3 secs</option>
+  </select>
+
+</br>
+  <!-- This id will be used in fill elements below to change the color to user specified -->
+  <p style = "color:rgb(250, 250, 250)"> Select Chart Colour:</p> <input id = "colour" type = "color">
+
+  <!-- Creating an event using a button, which will draw the plot to the screen -->
+  <button onclick ="drawChart()"> Draw Chart</button> 
+  
+  <!-- This is creating a div for the SVG that we are about to draw below -->
+  <div id = "svg_area"></div>
+  
+ 
+
+  
+</body>
+
+</html>
+<!-- Scripting for the document above -->
+<script>
+
+
+      /*Variables for script
+      //["Mercedes", 613.5],
+      //["Red Bull", 585.5],
+      //["Ferrari", 323.5],
+      //["McLaren", 275],
+      //["Alpine", 155],
+      //["Alpha Tauri", 142],
+      //["Aston Martin", 77],
+      //["Williams",23],
+      //["Alfa Romeo",13],
+      //["Haas", 0]]*/
+
+  
+// Code to create the svg object 
+// Creating a function from the "onclick()" event above in line 48
+function drawChart(){
+
+// Ensuring that the plot draws over the old plot, if one exists, so multiple plots are not drawn to the page 
+  d3.select("#svg_area").selectAll("*").remove();
+
+// Creating the required list of variables for plotting below
+// These are: data from the variables above in 2 arrays, the width of bars and total graph width
+//  Also we have the variables that have been created using a DOM query from the ID's in rows 30,38,46 
+// These will be used further below for setting the required elements
+    var con_champ = [613.5,585.5,323.5,275,155,142,77,23,13,0];
+    var constructors = ["Mercedes","Red Bull", "Ferrari", "Mclaren","Alpine","Alpha Tauri", "Aston Martin","Williams","Alfa Romeo", "Haas"];
+    var width = 40;
+    var graph_width = 500;
+    var height = document.getElementById("chartHeight").value;
+    var chart_c = document.getElementById("colour").value;
+    var time = document.getElementById("time").value;
+   
+
+// Creating y and x-scales for the plot- this tells the axis how big/small/tick placement etc
+// Then creating the axes themelves. using d3 elements to place the axes on the plot 
+// Reference 1 - using a secondary array to create an x- axis : http://using-d3js.com/04_07_ordinal_scales.html
+
+    // Y-Scale
+    var yScale = d3.scaleLinear()
+      .domain([0,d3.max(con_champ,function(d){return d;
+        })])
+      .range([height,0]);
+
+    // X-Scale- this is using the second array created earlier- with the names of constructors in it 
+    var xScale = d3.scaleBand()
+      .domain(constructors)
+      .range([0,graph_width]);
+
+
+
+    //Create y axis
+    var yAxis = d3.axisLeft()
+        .scale(yScale);
+
+    //Create x axis
+    var xAxis = d3.axisBottom()
+        .scale(xScale);
+
+
+
+// Creating the SVG container to draw the plot into- this is like the blank canvas
+// This is referencing the div in row 58- the #svg_area. 
+// We have also specified the size of the container. 
+
+    let svgContainer = d3.select("#svg_area").append("svg")
+        .attr("height", 800)
+        .attr("width",1000);
+
+
+
+// This is "joining" the data that is about  to be entered below and the svgContainer above 
+// It is also calling the data variable created in row 87 above
+
+    let data = svgContainer.selectAll("rect")
+        .data(con_champ);
+        
+// Creating the rectangles needed for a bar chart 
+
+    data.enter()
+        .append("rect")
+
+        // Adding Transitions-note we are using the variable we set from the user input in row 93 here.
+        .transition()
+          .duration(time)
+          .ease(d3.easeBounceOut)
+        // This sets the x- coordinates for each rectangle- starts 50px in from the left (50 + (50*0) = 50)
+        //then each rectangle is 50px further from the left of the page
+        .attr("x", function (d,i){return 50 + ( 50 * i);
+        })
+        // This is setting the y- coordinates for the plot using the scale created above 
+        .attr("y", function(d){return yScale(d)
+        })
+        // This is setting the height for each rectangle, this is using the data from the array that we saw earlier
+        // it also uses the user-set data that we created a variable with in row 91
+        .attr("height", function (d){return height - yScale(d);
+        })
+        // Setting the width of the chart and individual bars
+        .attr("width", width)
+        .attr("fill", chart_c);
+
+
+// Creating the labels for the chart. These appear just above the x-axis when the plot has completed. 
+
+//This is "joining" the data that is about  to be entered below and the svgContainer above 
+// It is also calling the data variable created in row 87 above
+
+
+    let mylabel = svgContainer.selectAll("text")
+      .data(con_champ);
+
+// Creating the labels for the chart 
+    mylabel.enter()
+      .append("text")
+
+     //  Transition starting state- we have just modified the x-axis in this instance 
+     .attr("x", function (d,i){return 75 + (i*50 ); 
+      })
+
+      // adding transition- note we are using the user-set time variable again here 
+      .transition()
+      .duration(time)
+      .delay(500)
+      .ease(d3.easeCircleIn)
+
+      // Transition ended
+      // X and Y coordinates for the labels- note the offset position versus the rectangles above.
+      // This is so the text appears centred on the bars, and that the labels are readable for the user 
+      .attr("x", function (d,i){return 65 + (i*50 ); 
+      }) 
+      .attr("y", height - 20) 
+      
+      // Setting the text styling
+      .attr("text-anchor", "middle")
+      .attr("font-size", "10px")
+      .attr("fill" , "white")
+
+      // Finally, calling the text, and in this instance we are using the same array data 
+      .text(function(d){
+        return d;
+      }) 
+
+
+// Adding the x and y axes to the chart after they are drawn. 
+// The "transform" and "translate" elements are the x and y coordinates
+// Note on the x axis we have again called the user-input height to ensure that the axes are created correctly 
+    svgContainer.append("g")
+        .attr("transform","translate(50,0)")
+        .call(yAxis)
+        .selectAll("text")
+          .attr("fill", "white")
+          ;   
+
+    svgContainer.append("g")
+        .attr("transform","translate (40," + height + ")")
+        .call(xAxis)
+        .selectAll("text")
+          .attr("transform","rotate (60)")
+          .attr("text-anchor","start")
+          .attr("fill", "white")
+          ;
+        
+  
+    
+  }
+
+
+</script>
+
